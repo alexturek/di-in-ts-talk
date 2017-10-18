@@ -1,10 +1,12 @@
 import * as config from './config';
 import { Band, Musician, StringMap } from './types';
 
-class Database { constructor(readonly url: string) {} }
+export class Database {
+  constructor(readonly url: string) {}
+}
 
 // A global per-process variable
-const db: any = new Database(config.db);
+export const db: any = new Database(config.db);
 
 // Our attempt to store context across JS events
 const CLS: any = null;
