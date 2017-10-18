@@ -1,0 +1,15 @@
+{
+  "name": "never-publish-me-thanks",
+  "version": "1.0.0",
+  "description": "For a talk!",
+  "main": "index.js",
+  "repository": "https://github.com/alexturek/di-in-ts-talk.git",
+  "author": "Alex Turek <alex@convoy.com>",
+  "license": "MIT",
+  "dependencies": {
+    "lodash": "^4.17.4"
+  },
+  "devDependencies": {
+    "@types/lodash": "^4.14.77"
+  }
+}
