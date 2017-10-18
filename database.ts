@@ -1,42 +1,44 @@
-import * as config from './config';
+import * as _ from 'lodash';
+
 import { Band, Musician, StringMap } from './types';
 
+function createConnectionPool(...args: any[]): any {}
+
 export class Database {
-  constructor(readonly url: string) {}
-}
+  public currentConnection: any = null;
+  private connectionPool: any = null;
 
-// A global per-process variable
-export const db: any = new Database(config.db);
-
-// Our attempt to store context across JS events
-const CLS: any = null;
-
-export async function withTransaction(innerQueries: () => Promise<any>) {
-  CLS.getContext().transaction = await db.newTransaction();
-  await innerQueries();
-  await CLS.getContext().transaction.commit();
-  delete CLS.getContext().transaction;
-}
-
-function getConnection() {
-  const transaction = CLS.getContext().transaction;
-  if (transaction) {
-    return transaction;
+  constructor(url: string | any) {
+    this.connectionPool = createConnectionPool(url);
+    if (!_.isString(url)) {
+      this.currentConnection = url;
+    } else {
+      this.currentConnection = this.connectionPool.newConn();
+    }
   }
-  return db.newConn();
-}
 
-export async function getMusiciansLike(constraints: StringMap): Promise<Musician[]> {
-  const conn = await getConnection();
-  return await conn.query(`SELECT * FROM musicians WHERE ?`, constraints);
-}
+  async withTransaction(innerQueries: (db: Database) => Promise<any>): Promise<void> {
+    const transaction = this.connectionPool.transaction();
+    const db: Database = new Database(transaction);
+    try {
+      await innerQueries(db);
+      await transaction.commit();
+    } catch (err) {
+      await transaction.rollback();
+    }
+  }
 
-export async function createBand(companyData: StringMap): Promise<Band> {
-  const conn = await getConnection();
-  return await conn.query(`INSERT INTO bands ?`, companyData);
-}
+  async getMusiciansLike(constraints: StringMap): Promise<Musician[]> {
+    return await this.currentConnection.query(`SELECT * FROM musicians WHERE ?`, constraints);
+  }
 
-export async function createMusician(userData: StringMap): Promise<Musician> {
-  const conn = await getConnection();
-  return await conn.query(`INSERT INTO musicians ?`, userData);
+  async createBand(companyData: StringMap): Promise<Band> {
+    this.currentConnection.currentConnectionection;
+    return await this.currentConnection.query(`INSERT INTO bands ?`, companyData);
+  }
+
+  async createMusician(userData: StringMap): Promise<Musician> {
+    this.currentConnection.currentConnectionection;
+    return await this.currentConnection.query(`INSERT INTO musicians ?`, userData);
+  }
 }
