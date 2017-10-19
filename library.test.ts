@@ -1,3 +1,5 @@
+import * as library from './library';
+
 import { Band, Musician } from './types';
 import { db } from './database';
 
@@ -15,14 +17,11 @@ describe(`library`, () => {
       }]);
     });
 
-    it(`only looks at musicians who are 18 or older`, () => {
-      expect(database.getMusiciansLike).to.have.been.calledWithMatch({
+    it(`queries for musicians that are >= 18`, async () => {
+      await library.findBandsWith('Somebody');
+      expect(db.getMusiciansLike).to.have.been.calledWithMatch({
         age: { $gte: sinon.match.atleast(18) } });
       });
-    });
-
-    it(`returns musicians grouped by band id`, () => {
-      database.getMusiciansLike.resolves([])
     });
   });
 });
