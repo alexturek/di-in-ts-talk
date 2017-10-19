@@ -1,20 +1,21 @@
+import { Aws } from './Aws';
 import { BetterAws } from './BetterAws';
+import { Db } from './Db';
 
-export class Application extends BetterAws {
+export class Application {
   constructor(
     readonly applicationConfig: any,
-    userSetup: any,
-    awsResources: any,
-    dbResources: any
-  ) {
-    super(userSetup, awsResources, dbResources);
-  }
+    readonly db: Db,
+    readonly aws: Aws,
+    readonly betterAws: BetterAws,
+  ) {}
 
   doApplicationThings() {
-    const user = this.getDatabaseUser();
+    this.betterAws.doCommonAwsOperations();
+    const user = this.db.getDatabaseUser();
 
-    const data = this.awsClient.createUser(user);
+    const data = this.aws.awsClient.createUser(user);
 
-    this.getDatabase().saveAwsData(data);
+    this.db.getDatabase().saveAwsData(data);
   }
 }

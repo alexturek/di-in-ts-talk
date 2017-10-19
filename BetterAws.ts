@@ -1,23 +1,20 @@
-import { Db } from './Db';
+import { Aws } from './Aws';
 
-export class BetterAws extends Db {
+export class BetterAws {
   constructor(
     readonly userSetup: any,
-    awsResources: any,
-    dbResources: any
-  ) {
-    super(awsResources, dbResources);
-  }
+    readonly aws: Aws
+  ) { }
 
   doCommonAwsOperations(): any {
     this.ensureAwsResources();
 
-    this.awsClient.lookAtService();
+    this.aws.awsClient.lookAtService();
   }
 
   ensureAwsResources(): any {
     if (!this.isAwsSetup()) {
-      this.setupAwsResources();
+      this.aws.setupAwsResources();
     }
     // and maybe some more things
   }

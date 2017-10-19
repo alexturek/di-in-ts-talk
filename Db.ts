@@ -1,12 +1,10 @@
-import { Aws } from './Aws';
 
-export class Db extends Aws {
+
+
+export class Db {
   constructor(
-    awsResources: any,
     readonly dbResources: any
-  ) {
-    super(awsResources);
-  }
+  ) {}
 
   getDatabase(): any {}
 
