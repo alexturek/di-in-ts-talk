@@ -1,10 +1,10 @@
 import { Band, Musician } from './types';
-import { Database } from './database';
+import { db } from './database';
 
 describe(`library`, () => {
   describe(`findBandsWith`, () => {
     beforeEach(() => {
-      sinon.stub(Database.prototype, 'getMusiciansLike').resolves([{
+      sinon.stub(db, 'getMusiciansLike').resolves([{
         name: 'Roy',
         age: 42,
         bandId: 'a',
