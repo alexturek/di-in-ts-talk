@@ -1,12 +1,14 @@
 import * as library from './library';
 
 import { Band, Musician } from './types';
-import { db } from './database';
+import { Database } from './database';
 
 describe(`library`, () => {
   describe(`findBandsWith`, () => {
+    let fakeDb: Database & sinon.StubInstance<Database>;
     beforeEach(() => {
-      sinon.stub(db, 'getMusiciansLike').resolves([{
+      fakeDb = sinon.stubInstance(Database);
+      fakeDb.getMusiciansLike.resolves([{
         name: 'Roy',
         age: 42,
         bandId: 'a',
@@ -18,8 +20,8 @@ describe(`library`, () => {
     });
 
     it(`queries for musicians that are >= 18`, async () => {
-      await library.findBandsWith('Somebody');
-      expect(db.getMusiciansLike).to.have.been.calledWithMatch({
+      await library.findBandsWith(fakeDb, 'Somebody');
+      expect(fakeDb.getMusiciansLike).to.have.been.calledWithMatch({
         age: { $gte: sinon.match.atleast(18) } });
       });
     });
