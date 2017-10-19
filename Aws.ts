@@ -7,5 +7,5 @@ export class Aws {
 
   setupAwsResources(): any {}
 
-  aws: any;
+  awsClient: any;
 }

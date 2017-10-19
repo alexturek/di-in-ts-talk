@@ -13,7 +13,7 @@ export class Application extends BetterAws {
   doApplicationThings() {
     const user = this.getDatabaseUser();
 
-    const data = this.aws.createUser(user);
+    const data = this.awsClient.createUser(user);
 
     this.getDatabase().saveAwsData(data);
   }

@@ -12,7 +12,7 @@ export class BetterAws extends Db {
   doCommonAwsOperations(): any {
     this.ensureAwsResources();
 
-    this.aws.lookAtService();
+    this.awsClient.lookAtService();
   }
 
   ensureAwsResources(): any {
