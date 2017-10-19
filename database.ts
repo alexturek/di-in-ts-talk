@@ -3,40 +3,41 @@ import { Band, Musician, StringMap } from './types';
 
 export class Database {
   constructor(readonly url: string) {}
+
+  async getMusiciansLike(constraints: StringMap): Promise<Musician[]> {
+    const conn = await getConnection();
+    return await conn.query(`SELECT * FROM musicians WHERE ?`, constraints);
+  }
+
+  async createBand(companyData: StringMap): Promise<Band> {
+    const conn = await getConnection();
+    return await conn.query(`INSERT INTO bands ?`, companyData);
+  }
+
+  async createMusician(userData: StringMap): Promise<Musician> {
+    const conn = await getConnection();
+    return await conn.query(`INSERT INTO musicians ?`, userData);
+  }
+
+  async withTransaction(innerQueries: () => Promise<any>) {
+    CLS.getContext().transaction = await newTransaction();
+    await innerQueries();
+    await CLS.getContext().transaction.commit();
+    delete CLS.getContext().transaction;
+  }
 }
 
 // A global per-process variable
-export const db: any = new Database(config.db);
+export const db: Database = new Database(config.db);
 
-// Our attempt to store context across JS events
-const CLS: any = null;
-
-export async function withTransaction(innerQueries: () => Promise<any>) {
-  CLS.getContext().transaction = await db.newTransaction();
-  await innerQueries();
-  await CLS.getContext().transaction.commit();
-  delete CLS.getContext().transaction;
-}
-
-function getConnection() {
+async function newTransaction(): Promise<any> {}
+function getConnection(): any {
   const transaction = CLS.getContext().transaction;
   if (transaction) {
     return transaction;
   }
-  return db.newConn();
+  return 'a connection';
 }
 
-export async function getMusiciansLike(constraints: StringMap): Promise<Musician[]> {
-  const conn = await getConnection();
-  return await conn.query(`SELECT * FROM musicians WHERE ?`, constraints);
-}
-
-export async function createBand(companyData: StringMap): Promise<Band> {
-  const conn = await getConnection();
-  return await conn.query(`INSERT INTO bands ?`, companyData);
-}
-
-export async function createMusician(userData: StringMap): Promise<Musician> {
-  const conn = await getConnection();
-  return await conn.query(`INSERT INTO musicians ?`, userData);
-}
+// Our attempt to store context across JS events
+const CLS: any = null;
